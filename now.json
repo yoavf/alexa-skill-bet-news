@@ -2,7 +2,7 @@
     "version": 2,
     "name": "php-7",
     "builds": [
-        { "src": "*.php", "use": "@now/php" }
+        { "src": "*.php", "use": "vercel-php" }
     ],
-    "alias": "glz-news-skill.now.sh"
+    "alias": "kan-news-flash-briefing-feed.now.sh"
 }

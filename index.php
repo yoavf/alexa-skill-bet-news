@@ -12,19 +12,22 @@ if ( $minutes < 7 ) {
     $hour--;
 }
 
-$hour_formatted = sprintf("%02d", $hour ) ;
-
+$hour_formatted = sprintf( "%02d", $hour ) ;
 $episode_name = "$date-$hour_formatted";
 
 $episode_time = DateTime::createFromFormat( 'ymd-H', $episode_name, $israel_tz );
-$update_time = clone $episode_time->setTimeZone( new DateTimeZone( 'UTC' ) );
+
+$update_time = clone $episode_time;
+$update_time->setTimeZone( new DateTimeZone( 'UTC' ) );
+
+$first_url = 'https://api.bynetcdn.com/Redirector/ipbc/manifest/news_he_' . $episode_time->format( 'YmdH00' ) . '/HLS/21/playlist.m3u8';
 
 $feed = [
-    'uid' => 'glz-latest-news-' . $episode,
+    'uid' => 'kan-latest-news-' . $episode_name,
     'updateDate'=> $update_time->format( 'Y-m-d\TH:i:s\Z' ),
-    'titleText' => 'GLZ news breifing for ' . $episode_time->format( 'l, F j, Y \a\t G:i' ),
-    'streamUrl' => "https://api.bynetcdn.com/Redirector/glz/{$episode_name}_NEWS/PD?awCollectionId=1111&ExternalId={$episode_name}_NEWS",
-    'redirectionUrl' => 'https://glz.co.il/',
+    'titleText' => 'KAN Reshet Bet news briefing for ' . $episode_time->format( 'l, F j, Y \a\t G:i' ),
+    'streamUrl' =>  $first_url,
+    'redirectionUrl' => 'https://kan.org.il/',
     'mainText' => '',
 ];
 
