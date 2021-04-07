@@ -24,7 +24,7 @@ $episode_name = "$date-$hour_formatted";
 $episode_time = DateTime::createFromFormat( 'ymd-H', $episode_name, $israel_tz );
 $cache_file = '/tmp/landing-page-cache-' . $episode_time->format( 'YmdH00' );
 
-if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 * 5 ))) {
+if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 ))) {
     // Cache file is less than five minutes old. 
     // Don't bother refreshing, just use the file as-is.
     $content = file_get_contents( $cache_file );
