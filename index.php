@@ -25,12 +25,10 @@ $episode_time = DateTime::createFromFormat( 'ymd-H', $episode_name, $israel_tz )
 $cache_file = '/tmp/landing-page-cache-' . $episode_time->format( 'YmdH00' );
 
 if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 * 5 ))) {
-    echo "cache file exist and is recent". PHP_EOL;;
     // Cache file is less than five minutes old. 
     // Don't bother refreshing, just use the file as-is.
     $content = file_get_contents( $cache_file );
  } else {
-    echo "gdetting form url" . PHP_EOL;
     // Our cache is out-of-date, so load the data from our remote server,
     // and also save it over our cache for next time.
     $content = file_get_contents( $url );
