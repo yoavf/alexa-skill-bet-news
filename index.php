@@ -40,6 +40,7 @@ if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 ))) {
      $entry_id = $matches[1];
  } else {
      error_log( "Cannot find entryId" );
+     unlink( $cache_file );
      die();
 }
 
