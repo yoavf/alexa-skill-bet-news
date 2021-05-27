@@ -24,6 +24,16 @@ $episode_name = "$date-$hour_formatted";
 $episode_time = DateTime::createFromFormat( 'ymd-H', $episode_name, $israel_tz );
 $cache_file = '/tmp/landing-page-cache-' . $episode_time->format( 'YmdH00' );
 
+$context = stream_context_create(
+    array(
+        "http" => array(
+            "header" => "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+        )
+    )
+);
+
+
+
 if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 ))) {
     // Cache file is less than five minutes old. 
     // Don't bother refreshing, just use the file as-is.
@@ -31,7 +41,7 @@ if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 ))) {
  } else {
     // Our cache is out-of-date, so load the data from our remote server,
     // and also save it over our cache for next time.
-    $content = file_get_contents( $url );
+    $content = file_get_contents( $url, false, $context );
     file_put_contents($cache_file, $content, LOCK_EX);
  }
 
