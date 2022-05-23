@@ -80,37 +80,27 @@ function getUserAgent()
 	$userAgentArray[] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38";
 	$userAgentArray[] = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36";
 	$userAgentArray[] = "Mozilla/5.0 (X11; CrOS x86_64 9901.77.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.97 Safari/537.36";
-	
+
 	$getArrayKey = array_rand($userAgentArray);
 	return $userAgentArray[$getArrayKey];
- 
+
 }
-
-
-$url = "https://www.kan.org.il/page.aspx?landingpageid=1009";
 
 
 
 $israel_tz = new DateTimeZone( 'Asia/Jerusalem' );
 
-$time = new DateTime( 'now', $israel_tz );
+$time = new DateTime( 'yesterday', $israel_tz );
 
 $hour = (int) $time->format('H');
 $minutes = (int) $time->format('i');
-$date = $time->format('ymd');
-
-if ( $minutes < 7 ) {
-    $hour--;
-}
+$date = $time->format('d-n-Y');
+$url = "https://omny.fm/shows/kan-english/{$date}-kan-english-news/embed";
+$url = "https://omny.fm/api/embed/shows/kan-english/clip/{$date}-kan-english-news";
 
 
-
-$hour_formatted = sprintf( "%02d", $hour ) ;
-$episode_name = "$date-$hour_formatted";
-
-$episode_time = DateTime::createFromFormat( 'ymd-H', $episode_name, $israel_tz );
-$cache_file = '/tmp/landing-page-cache-' . $episode_time->format( 'YmdH00' );
-
+$cache_file = '/tmp/landing-page-cache-' . $date;
+echo "fteching filee $url \n";
 $context = stream_context_create(
     array(
         "http" => array(
@@ -120,7 +110,7 @@ $context = stream_context_create(
 );
 
 if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 ))) {
-    // Cache file is less than five minutes old. 
+    // Cache file is less than five minutes old.
     // Don't bother refreshing, just use the file as-is.
     $content = file_get_contents( $cache_file );
  } else {
@@ -130,16 +120,9 @@ if (file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 ))) {
     file_put_contents($cache_file, $content, LOCK_EX);
  }
 
- preg_match( "/Hourly_News_Player\.loadMedia\(\{ entryId: '(.*)' }\)/", $content, $matches );
- if ( count( $matches ) > 1 ) {
-     $entry_id = $matches[1];
- } else {
-     error_log( "Cannot find entryId" );
-     unlink( $cache_file );
-     die();
-}
+$content = json_decode( $content );
 
-$stream_url = "https://cdnapisec.kaltura.com/p/2717431/sp/271743100/playManifest/entryId/$entry_id/protocol/https/format/applehttp/flavorIds/1_q3ohbrbm,1_a816qlvk/a.m3u8?uiConfId=47265863&clientTag=html5:v1.6.1";
+$stream_url = $content->AudioUrl;
 
 
 $update_time = clone $episode_time;
