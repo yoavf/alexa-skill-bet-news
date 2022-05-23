@@ -144,4 +144,5 @@ $feed = [
 ];
 
 header( 'Content-Type: application/json' );
+header( 'Cache-Control: max-age=21600');
 echo json_encode( $feed );
