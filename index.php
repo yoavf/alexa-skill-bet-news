@@ -90,17 +90,23 @@ function getUserAgent()
 
 $israel_tz = new DateTimeZone( 'Asia/Jerusalem' );
 
-$time = new DateTime( 'yesterday', $israel_tz );
+$time = new DateTime( 'yesterday 9pm', $israel_tz );
 
 $hour = (int) $time->format('H');
 $minutes = (int) $time->format('i');
 $date = $time->format('d-n-Y');
-$url = "https://omny.fm/shows/kan-english/{$date}-kan-english-news/embed";
+
 $url = "https://omny.fm/api/embed/shows/kan-english/clip/{$date}-kan-english-news";
 
+$date = $time->format('ymd');
+
+$hour_formatted = sprintf( "%02d", $hour ) ;
+$episode_name = "$date-$hour_formatted";
+
+$episode_time = DateTime::createFromFormat( 'ymd-H', $episode_name, $israel_tz );
 
 $cache_file = '/tmp/landing-page-cache-' . $date;
-echo "fteching filee $url \n";
+
 $context = stream_context_create(
     array(
         "http" => array(
@@ -131,7 +137,7 @@ $update_time->setTimeZone( new DateTimeZone( 'UTC' ) );
 $feed = [
     'uid' => 'kan-latest-news-' . $episode_name,
     'updateDate'=> $update_time->format( 'Y-m-d\TH:i:s\Z' ),
-    'titleText' => 'KAN Reshet Bet news briefing for ' . $episode_time->format( 'l, F j, Y \a\t G:i' ),
+    'titleText' => 'KAN Reka English briefing for ' . $episode_time->format( 'l, F j, Y \a\t G:i' ),
     'streamUrl' =>  $stream_url,
     'redirectionUrl' => 'https://kan.org.il/',
     'mainText' => '',
